@@ -2,9 +2,9 @@ import pdfplumber
 from docx import Document
 import os
 
-#This part is set around extracting text from different file formats, being a pdf or docx file 
 
 def extract_text_from_cv(file_path: str) -> str:
+    """Route to the correct parser based on file extension."""
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"CV file not found: {file_path}")
 
@@ -21,6 +21,7 @@ def extract_text_from_cv(file_path: str) -> str:
 
 
 def extract_text_from_pdf(file_path: str) -> str:
+    """Extract all text from a PDF, page by page."""
     text = ""
     with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
@@ -31,10 +32,6 @@ def extract_text_from_pdf(file_path: str) -> str:
 
 
 def extract_text_from_docx(file_path: str) -> str:
+    """Extract all text from a DOCX by joining paragraphs."""
     doc = Document(file_path)
     return "\n".join(p.text for p in doc.paragraphs)
-
-
-def extract_text_from_docx(file_path: str) -> str:
-    doc = Document(file_path)
-    return "\n".join([para.text for para in doc.paragraphs])

@@ -1,5 +1,4 @@
-#This is determining the role weights for each position 
-
+# Skill category weights per role — higher weight = more important for that role
 ROLE_WEIGHTS = {
     "Data Scientist": {
         "data_libraries": 1.5,

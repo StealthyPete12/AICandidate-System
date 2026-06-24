@@ -1,5 +1,4 @@
-#This is defining all the skills that are associated with the specific positions
-
+# Skills associated with each role, used for matching and scoring
 SKILL_REGISTRY = {
     "Data Analyst": {
         "python", "sql", "pandas", "powerbi", "excel", "tableau", "statistics", "reporting"
@@ -24,11 +23,9 @@ SKILL_REGISTRY = {
     }
 }
 
+
 def flatten_role_skills():
-    """
-    Returns a flat set of all known skills across roles.
-    Useful for fast membership checks.
-    """
+    """Return a flat set of all known skills across every role."""
     all_skills = set()
     for skills in SKILL_REGISTRY.values():
         all_skills.update(skills)

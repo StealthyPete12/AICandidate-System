@@ -10,8 +10,7 @@ from cv_parser import extract_text_from_cv
 from skill_extractor import extract_skills_from_text
 from skill_registry import SKILL_REGISTRY
 
-#This is describing the same skills in different ways 
-
+# Map common aliases to a single canonical skill name
 SKILL_ALIASES = {
     "amazon web services": "aws",
     "node": "node.js",
@@ -30,9 +29,7 @@ def normalize_skills(skills):
         normalized.append(SKILL_ALIASES.get(key, key))
     return normalized
 
-#This part is tackling the problem of not every CV making sense for every role, no matter the ML model that is being used
-#This is also implementing the rule of if the CV doesnt match a specific job title then it wont be considered
-
+# Minimum skill signals a CV must have to qualify for each role
 ROLE_ELIGIBILITY = {
     "Data Analyst": {"sql", "powerbi", "tableau", "reporting"},
     "Backend Engineer": {"api", "backend", "server", "java", "node.js", "python"},
@@ -43,14 +40,14 @@ ROLE_ELIGIBILITY = {
     "Frontend Engineer": {"javascript", "react", "css", "html"},
 }
 
-#This part is for explaining why that specific job title was chosen and matches it based on the skills in the CV 
 
 def explain_role_match(extracted_skills: set, role: str):
+    """Return the skills that overlap between the CV and a given role."""
     role_skills = SKILL_REGISTRY.get(role, set())
     return sorted(extracted_skills.intersection(role_skills))
 
-#This is detecting certain keywords within the CV to determine the seniority level 
 
+# Keywords used to estimate seniority from CV language
 SENIORITY_KEYWORDS = {
     "junior": {"intern", "junior", "assist", "trainee"},
     "senior": {"senior", "lead", "principal", "architect", "own", "designed"},
@@ -68,7 +65,8 @@ def detect_seniority(text: str):
     else:
         return "Mid‑level"
 
-#This is the structure and overall UI of the app
+
+# --- Streamlit UI ---
 
 st.set_page_config(page_title="AI Candidate Role Matcher", layout="wide")
 
@@ -80,8 +78,7 @@ st.caption(
 
 st.markdown("---")
 
-#This is where the trained model and the skills encoder are loaded
-
+# Load the trained classifier and skill encoder
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
@@ -93,15 +90,11 @@ def load_model():
 
 model, mlb = load_model()
 
-#This is the tab that allows you to upload your CV
-
 uploaded_file = st.file_uploader("Upload your CV (PDF)", type=["pdf"])
-
-#This is the main pipeline/process of the system when a CV is being uploaded
 
 if uploaded_file:
 
-    #This is focused on extracting the text 
+    # Extract text from the uploaded CV
     with st.spinner("Analyzing CV…"):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             tmp.write(uploaded_file.read())
@@ -115,7 +108,7 @@ if uploaded_file:
         st.error("No recognizable technical skills were found.")
         st.stop()
 
-    #This is set to normalize and implement frequency weighting of the skills to allow for more accuracy 
+    # Normalize skills and count how often each appears
     normalized_skills = normalize_skills(raw_skills)
     skill_counts = Counter(normalized_skills)
 
@@ -127,14 +120,13 @@ if uploaded_file:
 
     st.markdown("---")
 
-    #This is to detect the seniority level 
     seniority_level = detect_seniority(text)
     st.subheader("Seniority Assessment")
     st.write(f"**Estimated level:** {seniority_level}")
 
     st.markdown("---")
 
-    #This is the model generating the prediction 
+    # Run the ML model to get per-role probabilities
     encoded = mlb.transform([normalized_skills])
     probs = model.predict_proba(encoded)[0]
     roles = model.classes_
@@ -144,7 +136,7 @@ if uploaded_file:
         "ML Score": probs
     })
 
-    #This is part is focused on eligibility so that only certain skills are allowed through that match the most accurate position 
+    # Zero out scores for roles the CV isn't eligible for
     def is_role_eligible(role):
         required = ROLE_ELIGIBILITY.get(role, set())
         return bool(extracted_skill_set.intersection(required))
@@ -152,7 +144,7 @@ if uploaded_file:
     results_df["Eligible"] = results_df["Role"].apply(is_role_eligible)
     results_df.loc[~results_df["Eligible"], "ML Score"] = 0.0
 
-    #This is focused on Hybrid fallback scoring to improve the overall accuracy and precision of the prediction
+    # Combine ML probability with skill-overlap into a final score
     def hybrid_score(row):
         role = row["Role"]
         ml_score = row["ML Score"]
@@ -176,7 +168,7 @@ if uploaded_file:
         ascending=False
     ).reset_index(drop=True)
 
-    #This part is focused on ranking the top 3 positions based on the skills matched 
+    # Display top 3 roles
     st.subheader("Top 3 Suitable Roles")
 
     top_3 = results_df.head(3)
@@ -184,13 +176,13 @@ if uploaded_file:
     for i, row in top_3.iterrows():
         st.markdown(
             f"""
-            **#{i + 1}: {row['Role']}**  
-            Final Score: `{row['Final Score']:.2f}`  
+            **#{i + 1}: {row['Role']}**
+            Final Score: `{row['Final Score']:.2f}`
             ML Probability: `{row['ML Score']:.2f}`
             """
         )
 
-    #This is explaining why the top 3 positions are suitable 
+    # Explain which skills contributed to each recommendation
     st.subheader("🔍 Why These Roles Appeared")
 
     for i, row in top_3.iterrows():
@@ -204,7 +196,7 @@ if uploaded_file:
         else:
             st.write("No strong overlap beyond general technical background.")
 
-    #This is a visual diagram of all the positions showing which ones you would be best suited for
+    # Bar chart of all role scores
     st.subheader("Role Suitability Ranking")
 
     chart_df = (
@@ -215,7 +207,7 @@ if uploaded_file:
 
     st.bar_chart(chart_df)
 
-    #Based on the best matched position this will show you which technologies you matched with 
+    # Skill breakdown for the top-ranked role
     st.subheader("🧩 Skill Breakdown (Top Role)")
     top_role = top_3.iloc[0]["Role"]
     top_matches = explain_role_match(extracted_skill_set, top_role)

@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" width="820" height="520">
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    @keyframes flowDown {
+      0% { offset-distance: 0%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+    @keyframes flowRight {
+      0% { offset-distance: 0%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { offset-distance: 100%; opacity: 0; }
+    }
+
+    .box { rx: 10; ry: 10; stroke-width: 2; }
+    .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; fill: #fff; text-anchor: middle; font-weight: 600; }
+    .sublabel { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #fff; text-anchor: middle; opacity: 0.85; }
+    .arrow { stroke: #94a3b8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+
+    .step1 { animation: fadeIn 0.5s ease 0.2s both; }
+    .step2 { animation: fadeIn 0.5s ease 0.6s both; }
+    .step3 { animation: fadeIn 0.5s ease 1.0s both; }
+    .step4 { animation: fadeIn 0.5s ease 1.4s both; }
+    .step5 { animation: fadeIn 0.5s ease 1.8s both; }
+    .step6 { animation: fadeIn 0.5s ease 2.2s both; }
+
+    .dot1 { offset-path: path('M 410 82 L 410 118'); animation: flowDown 1.2s ease 0.8s infinite; }
+    .dot2 { offset-path: path('M 410 182 L 410 218'); animation: flowDown 1.2s ease 1.2s infinite; }
+    .dot3 { offset-path: path('M 410 282 L 410 318'); animation: flowDown 1.2s ease 1.6s infinite; }
+    .dot4a { offset-path: path('M 340 382 L 240 418'); animation: flowDown 1.2s ease 2.0s infinite; }
+    .dot4b { offset-path: path('M 480 382 L 580 418'); animation: flowDown 1.2s ease 2.0s infinite; }
+    .dot5 { offset-path: path('M 410 382 L 410 418'); animation: flowDown 1.2s ease 2.0s infinite; }
+
+    .dot {
+      r: 4;
+      fill: #6366f1;
+      opacity: 0;
+    }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0891b2"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#f87171"/>
+    </linearGradient>
+    <linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="grad6" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- White background -->
+  <rect width="820" height="520" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="410" y="30" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700" fill="#1e293b" text-anchor="middle">System Architecture</text>
+
+  <!-- Step 1: CV Upload -->
+  <g class="step1">
+    <rect class="box" x="295" y="48" width="230" height="44" fill="url(#grad1)"/>
+    <text class="label" x="410" y="68">CV Upload</text>
+    <text class="sublabel" x="410" y="83">PDF / DOCX</text>
+  </g>
+
+  <!-- Arrow 1→2 -->
+  <line class="arrow step2" x1="410" y1="92" x2="410" y2="128"/>
+  <circle class="dot dot1"/>
+
+  <!-- Step 2: Text Extraction -->
+  <g class="step2">
+    <rect class="box" x="295" y="128" width="230" height="44" fill="url(#grad2)"/>
+    <text class="label" x="410" y="148">Text Extraction</text>
+    <text class="sublabel" x="410" y="163">pdfplumber / python-docx</text>
+  </g>
+
+  <!-- Arrow 2→3 -->
+  <line class="arrow step3" x1="410" y1="172" x2="410" y2="208"/>
+  <circle class="dot dot2"/>
+
+  <!-- Step 3: Skill Extraction -->
+  <g class="step3">
+    <rect class="box" x="275" y="208" width="270" height="44" fill="url(#grad3)"/>
+    <text class="label" x="410" y="228" fill="#0c4a6e">Skill Extraction &amp; Normalization</text>
+    <text class="sublabel" x="410" y="243" fill="#0c4a6e">Alias mapping + frequency weighting</text>
+  </g>
+
+  <!-- Arrow 3→4 -->
+  <line class="arrow step4" x1="410" y1="252" x2="410" y2="288"/>
+  <circle class="dot dot3"/>
+
+  <!-- Step 4: Eligibility Gate -->
+  <g class="step4">
+    <rect class="box" x="295" y="288" width="230" height="44" fill="url(#grad4)"/>
+    <text class="label" x="410" y="308">Eligibility Gating</text>
+    <text class="sublabel" x="410" y="323">Exclude unqualified roles</text>
+  </g>
+
+  <!-- Arrows from Gate splitting to ML and Seniority, and center to Hybrid -->
+  <line class="arrow step5" x1="340" y1="332" x2="230" y2="388"/>
+  <line class="arrow step5" x1="410" y1="332" x2="410" y2="388"/>
+  <line class="arrow step5" x1="480" y1="332" x2="590" y2="388"/>
+  <circle class="dot dot4a"/>
+  <circle class="dot dot5"/>
+  <circle class="dot dot4b"/>
+
+  <!-- Step 5a: ML Model -->
+  <g class="step5">
+    <rect class="box" x="100" y="388" width="200" height="44" fill="url(#grad5)"/>
+    <text class="label" x="200" y="408">ML Model</text>
+    <text class="sublabel" x="200" y="423">Decision Tree scores</text>
+  </g>
+
+  <!-- Step 5b: Hybrid Scoring -->
+  <g class="step5">
+    <rect class="box" x="310" y="388" width="200" height="44" fill="url(#grad6)"/>
+    <text class="label" x="410" y="408">Hybrid Scoring</text>
+    <text class="sublabel" x="410" y="423">70% ML + 30% skills</text>
+  </g>
+
+  <!-- Step 5c: Seniority -->
+  <g class="step5">
+    <rect class="box" x="520" y="388" width="200" height="44" fill="url(#grad2)"/>
+    <text class="label" x="620" y="408">Seniority Detection</text>
+    <text class="sublabel" x="620" y="423">Junior / Mid / Senior</text>
+  </g>
+
+  <!-- Arrows down to output -->
+  <line class="arrow step6" x1="200" y1="432" x2="340" y2="468"/>
+  <line class="arrow step6" x1="410" y1="432" x2="410" y2="468"/>
+  <line class="arrow step6" x1="620" y1="432" x2="480" y2="468"/>
+
+  <!-- Step 6: Output -->
+  <g class="step6">
+    <rect class="box" x="285" y="468" width="250" height="44" fill="#1e293b"/>
+    <text class="label" x="410" y="488">Top 3 Roles + Explanations</text>
+    <text class="sublabel" x="410" y="503">Ranked results with reasoning</text>
+  </g>
+</svg>
